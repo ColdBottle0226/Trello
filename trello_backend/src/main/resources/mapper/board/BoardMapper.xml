@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.board.repository.BoardDao">
+    <!--  ==================== INSERT ====================  -->
+    <insert id="insertBoardMember" parameterType="pjt.trello.board.model.BoardBrdAdminVo">
+        INSERT INTO tb_brd_admin (
+        brd_code
+        , user_id
+        , user_role
+        ) VALUES (
+        #{brdCode}
+        , #{userId}
+        , 'MEMBER'
+        )
+    </insert>
+
+    <!--  ==================== SELECT ====================  -->
+    <!-- 보드 목록 출력   -->
+    <select id="selectBoardList" resultType="pjt.trello.board.model.BoardBrdVo">
+        SELECT
+          brd_seq
+        , brd_code
+        , brd_name
+        , visibility
+        , bookmark_yn
+        , del_yn
+        FROM tb_brd
+        ORDER BY
+        brd_seq DESC
+    </select>
+
+    <!-- 특정 보드의 정보(리스트, 카드)   -->
+    <select id="selectBrdByPk" resultType="pjt.trello.board.model.BoardBrdVo">
+        SELECT
+        a.brd_code
+        , a.brd_name
+        , a.visibility
+        , a.bookmark_yn
+        , b.list_code
+        , b.list_name
+        , b.list_ord
+        , c.card_code
+        , c.card_ord
+        , c.title
+        , c.content
+        , c.img_cover
+        FROM tb_brd a
+        LEFT OUTER JOIN tb_list b
+        ON a.brd_code = b.brd_code
+        LEFT OUTER JOIN tb_card c
+        ON b.list_code = c.list_code
+        WHERE a.brd_code = #{brdCode}
+        and a.del_yn = 'N'
+    </select>
+
+    <select id="selectBrdAdmin" parameterType="pjt.trello.board.model.BoardBrdAdminVo" resultType="pjt.trello.board.model.BoardBrdAdminVo">
+        SELECT
+        brd_code
+        , user_id
+        , user_role
+        FROM tb_brd_admin
+        WHERE brd_code = #{brdCode}
+    </select>
+
+    <select id="selectBoardInfo" resultType="pjt.trello.board.model.BoardBrdVo">
+        SELECT
+        brd_seq
+        , brd_code
+        , brd_name
+        , visibility
+        , bookmark_yn
+        , del_yn
+        FROM tb_brd
+        WHERE brd_code = #{brdCode}
+    </select>
+    <!--  ==================== UPDATE ====================  -->
+    <update id="updateAdmin" parameterType="pjt.trello.board.model.BoardBrdAdminVo">
+        UPDATE tb_brd_admin
+        SET user_role='ADMIN'
+        WHERE user_id=#{userId}
+    </update>
+
+    <update id="updateVisibility" parameterType="pjt.trello.board.model.BoardBrdVo">
+        UPDATE tb_brd
+        SET visibility=#{visibility}
+        WHERE brd_code=#{brdCode}
+    </update>
+
+    <update id="updateBrdInfo" parameterType="pjt.trello.board.model.BoardBrdVo">
+        UPDATE tb_brd
+        SET
+        <if test="brdName!=null and !brdName.equals('')">
+            brd_name=#{brdName}
+        </if>
+        <if test="delYn!=null and !delYn.equals('')">
+            del_yn=#{delYn}
+        </if>
+        WHERE brd_code=#{brdCode}
+    </update>
+
+</mapper>

@@ -1,0 +1,49 @@
+<configuration>
+    <!--파일형식으로 저장하기 위한 appender-->
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>C:\log\logback\logback-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 로그를 콘솔에 찍기 위한 appender   -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger -->
+
+    <!-- 쿼리 결과값 테이블 -->
+    <!--  주석처리시 쿼리문만 확인가능  -->
+    <logger name="jdbc.resultsettable" level="INFO" appender-ref="console" />
+
+       <!-- jdbc 로그 출력 옵션 -->
+	<logger name="jdbc" level="OFF" />
+	<logger name="jdbc.sqlonly" level="OFF" />
+	<logger name="jdbc.sqltiming" level="DEBUG" />
+	<logger name="jdbc.audit" level="OFF" />
+	<logger name="jdbc.resultset" level="OFF" />
+	<logger name="jdbc.connection" level="OFF" />
+
+    <!-- Project Logger -->
+    <logger name="vuerlyServer.vuerly" level="DEBUG" appender-ref="console" />
+
+    <!-- Root Logger -->
+    <root level="info">
+        <appender-ref ref="ROLLING" />
+        <appender-ref ref="console" />
+    </root>
+
+</configuration>

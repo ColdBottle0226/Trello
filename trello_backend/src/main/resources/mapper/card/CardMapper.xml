@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.card.repository.CardDao">
+
+    <!--  ==================== INSERT ====================  -->
+    <insert id="insertCard" parameterType="pjt.trello.card.model.CardVo">
+        INSERT INTO tb_card (
+        card_code
+        , title
+        , content
+        , img_cover
+        , list_code
+        ,card_ord
+        ) VALUES (
+        #{cardCode}
+        , #{title}
+        , #{content}
+        , #{imgCover}
+        , #{listCode}
+        , #{cardOrd}
+        )
+    </insert>
+
+    <!--  ==================== SELECT ====================  -->
+    <select id="getMaxCardCode" resultType="String">
+        SELECT
+        max(card_code)
+        FROM tb_card
+    </select>
+
+    <select id="getInfoCardByPk" resultType="pjt.trello.card.model.CardVo">
+        SELECT
+        a.card_code
+        , a.card_ord
+        , a.title
+        , a.content
+        , a.img_cover
+        , b.list_name
+        FROM tb_card a
+        LEFT OUTER JOIN tb_list b
+        ON a.list_code = b.list_code
+        WHERE card_code = #{cardCode}
+    </select>
+
+    <select id="getResultBySearch" parameterType="string" resultType="pjt.trello.card.model.CardVo">
+        SELECT
+        a.card_code
+        , a.card_ord
+        , a.title
+        , b.content
+        FROM tb_card a
+        LEFT OUTER JOIN tb_activity b
+        ON a.card_code = b.card_code
+        WHERE a.title like CONCAT('%',#{keyword},'%')
+        OR b.content like CONCAT('%',#{keyword},'%')
+        and b.del_yn = 'N'
+    </select>
+
+    <!--  ==================== UPDATE ====================  -->
+    <update id="updateCardInfo" parameterType="pjt.trello.card.model.CardVo">
+        UPDATE tb_card
+        SET title=#{title}
+        ,list_code=#{listCode}
+        <if test="content!=null and !content.equals('')">
+            ,content=#{content}
+        </if>
+        <if test="imgCover!=null and !imgCover.equals('')">
+            ,img_cover=#{imgCover}
+        </if>
+        WHERE card_code = #{cardCode}
+    </update>
+
+    <update id="updateCardOrd" parameterType="java.util.List">
+        UPDATE tb_card
+        SET card_ord = CASE
+        <!--   리스트 개수만큼 cardcode when    -->
+        <foreach item="card" index="index" collection="list" open="WHEN" separator="WHEN" close="END">
+            card_code = #{card.cardCode} THEN #{card.cardOrd}
+        </foreach>
+        <!--  변환할 숫자 then 적용      -->
+        WHERE card_code IN
+        <foreach item="card" index="index" collection="list" open="(" separator="," close=")">
+            #{card.cardCode}
+        </foreach>
+    </update>
+
+    <update id="updateCardPosition" parameterType="pjt.trello.card.model.CardVo">
+        UPDATE tb_card
+        SET list_code = #{listCode},
+        card_ord = #{cardOrd}
+        WHERE card_code = #{cardCode}
+    </update>
+
+    <!--  ==================== DELETE ====================  -->
+    <delete id="deleteCardByPk" parameterType="pjt.trello.card.model.CardVo">
+        DELETE FROM tb_card
+        WHERE card_code = #{cardCode}
+    </delete>
+</mapper>

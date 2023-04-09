@@ -1,0 +1,31 @@
+{
+  "name": "trello",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt --port 3000",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.3.0",
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/proxy": "^2.1.0",
+    "@toast-ui/editor": "^3.2.2",
+    "@toast-ui/vue-editor": "^3.2.3",
+    "@tui-nuxt/editor": "^1.0.0-beta.3",
+    "axios": "^0.21.1",
+    "cookie-universal-nuxt": "^2.2.2",
+    "core-js": "^3.25.3",
+    "element-ui": "^2.15.10",
+    "express": "^4.18.2",
+    "js-cookie": "^3.0.1",
+    "nuxt": "^2.16.2",
+    "vue": "^2.7.10",
+    "vue-property-decorator": "^9.1.2",
+    "vue-server-renderer": "^2.6.14",
+    "vue-template-compiler": "^2.7.10",
+    "vuedraggable": "^2.24.3"
+  }
+}

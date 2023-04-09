@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.attach.repository.AttachDao">
+
+    <!--  ==================== INSERT ====================  -->
+    <insert id="insertAttach" parameterType="pjt.trello.attach.model.AttachmentVo">
+        INSERT INTO tb_attachment (
+        attach_code
+        , file_loc
+        , cre_dt
+        , card_code
+        ) VALUES (
+        #{attachCode}
+        , #{fileLoc}
+        , date_format(now(),'%Y%m%d%H%i%s')
+        , #{cardCode}
+        )
+    </insert>
+
+    <!--  ==================== SELECT ====================  -->
+    <select id="getMaxAttachCode" resultType="String">
+        SELECT
+        max(attach_code)
+        FROM tb_attachment
+    </select>
+
+    <select id="getInfoAttachByPk"  resultType="pjt.trello.attach.model.AttachmentVo">
+        SELECT
+        attach_code
+        , file_loc
+        FROM tb_attachment
+        WHERE card_code = #{cardCode}
+    </select>
+
+    <!--  ==================== DELETE ====================  -->
+    <delete id="deleteAttachByPk" parameterType="String">
+        DELETE FROM tb_attachment
+        WHERE attach_code = #{attachCode}
+    </delete>
+</mapper>

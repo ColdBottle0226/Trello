@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.card.repository.ActivityDao">
+
+    <!--  ==================== INSERT ====================  -->
+    <insert id="insertActivity" parameterType="pjt.trello.card.model.ActivityVo">
+        INSERT INTO tb_activity (
+        ac_code
+        , content
+        , cmnt_id
+        , cmnt_att
+        , like_cnt
+        , udt_yn
+        , del_yn
+        , cre_id
+        , cre_dt
+        , card_code
+        ) VALUES (
+        #{acCode}
+        , #{content}
+        , #{cmntId}
+        , #{cmntAtt}
+        , #{likeCnt}
+        , 'N'
+        , 'N'
+        , #{creId}
+        , date_format(now(),'%Y%m%d%H%i%s')
+        , #{cardCode}
+        )
+    </insert>
+
+    <!--  ==================== SELECT ====================  -->
+    <select id="getMaxActivityCode" resultType="String">
+        SELECT
+        max(ac_code)
+        FROM tb_activity
+    </select>
+
+    <select id="getInfoActivityByPk"  resultType="pjt.trello.card.model.ActivityVo">
+        SELECT
+        ac_code
+        , content
+        , cmnt_id
+        , cmnt_att
+        , like_cnt
+        , udt_yn
+        , del_yn
+        , cre_id
+        , cre_dt
+        , card_code
+        FROM tb_activity
+        WHERE card_code = #{cardCode}
+        AND del_yn = 'N'
+    </select>
+
+    <!--  ==================== UPDATE ====================  -->
+    <update id="updateActivityDelYn" parameterType="pjt.trello.card.model.ActivityVo">
+        UPDATE tb_activity
+        SET del_yn = 'Y'
+        , udt_yn = 'Y'
+        WHERE ac_code = #{acCode}
+    </update>
+
+    <update id="updateActivityInfo" parameterType="pjt.trello.card.model.ActivityVo">
+        UPDATE tb_activity
+        SET content=#{content}
+        ,udt_yn = 'Y'
+        <if test="cmntId!=null and !cmntId.equals('')">
+            ,cmnt_id=#{cmntId}
+        </if>
+        <if test="cmntAtt!=null and !cmntAtt.equals('')">
+            ,cmnt_att=#{cmntAtt}
+        </if>
+        WHERE ac_code = #{acCode}
+    </update>
+
+</mapper>

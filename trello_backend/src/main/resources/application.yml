@@ -1,0 +1,55 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+  ##??? ?? ??
+  ## http://localhost:8080/swagger-ui/index.html
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jwt:
+    secret : VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHN
+  servlet:
+    multipart:
+      maxFileSize: 10485760
+      maxRequestSize: 10485760
+      location: C:/temp/upload/
+  redis:
+    host: localhost
+    port: 6378
+
+  ## My SQL
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://localhost:3306/trello?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: 890452
+#    url: jdbc:log4jdbc:mysql://192.168.0.141:3306/trello?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+#    username: M2MNEW
+#    password: m2makstp
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 10000
+      connection-init-sql: SELECT 1
+      validation-timeout: 5000
+      minimum-idle: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+## mybatis
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+#  config-location: classpath:mybatis-config.xml  //혹시 오류가 난다면 여기 부분 제거
+  configuration:
+    map-underscore-to-camel-case: true
+
+## ?? ?? ?? ??
+logging:
+  level:
+    root: info
+
+resource:
+  path: file:///C:/temp/upload/
+
+upload:
+  path: /upload/**

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.member.repository.MemberDao">
+
+    <!--  ==================== INSERT ====================  -->
+    <!-- 회원가입   -->
+    <insert id="memberJoin" parameterType="pjt.trello.member.model.UserVo">
+        INSERT INTO tb_user (
+        user_id
+        , user_name
+        , user_email
+        , password
+        , user_status
+        , del_yn
+        , login_fail_cnt
+        , cre_dt
+        , secret_key
+        ) VALUES (
+        #{userId}
+        , #{userName}
+        , #{userEmail}
+        , #{password}
+        , '00'
+        , 'N'
+        , 0
+        , date_format(now(),'%Y%m%d%H%i%s')
+        , #{secretKey}
+        )
+    </insert>
+
+    <!--  ==================== SELECT ====================  -->
+    <!--  아이디 중복 확인  -->
+    <select id="memberIdCheck" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE user_id=#{userId}
+    </select>
+
+    <!--  이메일 중복 확인  -->
+    <select id="memberEmailCheck" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE user_email=#{userEmail}
+    </select>
+
+    <!--  로그인  -->
+    <select id="memberLogin" parameterType="pjt.trello.member.model.UserVo" resultType="pjt.trello.member.model.UserVo">
+        SELECT
+        user_id
+        , user_name
+        , user_email
+        , user_status
+        , password
+        , secret_key
+        , del_yn
+        FROM tb_user
+        WHERE user_id=#{userId}
+    </select>
+
+    <select id="getMemberInfo" parameterType="String" resultType="pjt.trello.member.model.UserVo">
+        SELECT
+        user_id
+        , user_name
+        , user_email
+        FROM tb_user
+        WHERE secret_key=#{secretKey}
+    </select>
+
+    <select id="memberCheck" parameterType="String" resultType="String">
+        SELECT
+        del_yn
+        FROM tb_user
+        WHERE user_id=#{userId}
+    </select>
+
+    <!--  ==================== UPDATE ====================  -->
+    <update id="updateSecretKey" parameterType="pjt.trello.member.model.UserVo">
+        UPDATE tb_user
+        SET secret_key=#{newSecretKey}
+        WHERE user_id=#{userId}
+    </update>
+
+    <!--  마지막 로그인 시간  -->
+    <update id="updateLastLoginDt" parameterType="pjt.trello.member.model.UserVo">
+        UPDATE tb_user
+        SET login_dt = date_format(now(),'%Y%m%d%H%i%s')
+        WHERE user_id=#{userId}
+    </update>
+
+    <!-- 회원 탈퇴   -->
+    <update id="updateMemberDelYn" parameterType="pjt.trello.member.model.UserVo">
+        UPDATE tb_user
+        SET del_yn = 'Y'
+        , udt_dt = date_format(now(),'%Y%m%d%H%i%s')
+        , user_status = '10'
+        WHERE user_id=#{userId}
+    </update>
+
+    <update id="updateMemberInfo" parameterType="pjt.trello.member.model.UserVo">
+        UPDATE tb_user
+        SET
+        <if test="userEmail!=null and !userEmail.equals('')">
+            user_email = #{userEmail}
+        </if>
+        <if test="userName!=null and !userName.equals('')">
+        , user_name = #{userName}
+        </if>
+        <if test="password!=null and !password.equals('')">
+        , password = #{password}
+        </if>
+        , udt_dt = date_format(now(),'%Y%m%d%H%i%s')
+        WHERE user_id=#{userId}
+    </update>
+
+</mapper>

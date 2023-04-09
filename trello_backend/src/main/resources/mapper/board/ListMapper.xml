@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.board.repository.ListDao">
+
+    <!--  ==================== INSERT ====================  -->
+    <insert id="insertList" parameterType="pjt.trello.board.model.ListVo">
+        INSERT INTO tb_list (
+        list_code
+        , list_name
+        , brd_code
+        ) VALUES (
+        #{listCode}
+        , #{listName}
+        , #{brdCode}
+        )
+    </insert>
+
+    <!--  ==================== SELECT ====================  -->
+    <select id="getMaxListCode" resultType="String">
+        SELECT
+        max(list_code)
+        FROM tb_list
+    </select>
+
+    <select id="getInfoListByPk" resultType="pjt.trello.board.model.ListVo">
+        SELECT
+        list_code
+        , list_name
+        , brd_code
+        FROM tb_list
+        WHERE list_code = #{listCode}
+    </select>
+
+    <!--  ==================== UPDATE ====================  -->
+    <update id="updateListInfo" parameterType="pjt.trello.board.model.ListVo">
+        UPDATE tb_list
+        SET
+        <if test="listName!=null and !listName.equals('')">
+            list_name=#{listName}
+        </if>
+        WHERE list_code = #{listCode}
+    </update>
+
+    <update id="updateListOrd" parameterType="pjt.trello.board.model.ListVo">
+        UPDATE tb_list
+        SET list_ord=#{listOrd}
+        WHERE list_code = #{listCode}
+    </update>
+
+    <!--  ==================== DELETE ====================  -->
+    <delete id="deleteListByPk" parameterType="String">
+        DELETE FROM tb_list
+        WHERE list_code = #{listCode}
+    </delete>
+</mapper>
